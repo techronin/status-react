@@ -34,11 +34,12 @@
                     :on-focus          #()
                     :on-blur           #()
                     :on-change-text    #()
-                    :on-change         #()})
+                    :on-change         #()
+                    :auto-capitalize   :sentences})
 
 (defn field-animation [{:keys [top to-top font-size to-font-size
                                line-width to-line-width]}]
-  (let [duration (:label-animation-duration config)
+  (let [duration  (:label-animation-duration config)
         animation (anim/parallel [(anim/timing top {:toValue  to-top
                                                     :duration duration})
                                   (anim/timing font-size {:toValue  to-font-size
@@ -103,7 +104,8 @@
                 max-line-width]} (r/state component)
         {:keys [wrapper-style input-style label-hidden? line-color focus-line-color secure-text-entry
                 label-color error-color error label value on-focus on-blur
-                on-change-text on-change on-end-editing editable placeholder]} (merge default-props (r/props component))
+                on-change-text on-change on-end-editing editable placeholder auto-capitalize]}
+        (merge default-props (r/props component))
         line-color       (if error error-color line-color)
         focus-line-color (if error error-color focus-line-color)
         label-color      (if (and error (not float-label?)) error-color label-color)
@@ -116,6 +118,7 @@
                   :placeholder       (or placeholder "")
                   :editable          editable
                   :secure-text-entry secure-text-entry
+                  :auto-capitalize   auto-capitalize
                   :on-focus          #(on-input-focus {:component component
                                                        :animation {:top           label-top
                                                                    :to-top        (:label-top config)
@@ -146,9 +149,9 @@
      [text {:style (st/error-text error-color)} error]]))
 
 (defn text-field [_ _]
-  (let [component-data {:get-initial-state            get-initial-state
-                        :component-will-mount         component-will-mount
-                        :display-name                 "text-field"
-                        :reagent-render               reagent-render}]
+  (let [component-data {:get-initial-state    get-initial-state
+                        :component-will-mount component-will-mount
+                        :display-name         "text-field"
+                        :reagent-render       reagent-render}]
     ;(log/debug "Creating text-field component: " data)
     (r/create-class component-data)))
